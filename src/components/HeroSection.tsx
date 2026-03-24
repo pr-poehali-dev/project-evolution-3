@@ -1,149 +1,281 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const images = [
-  'https://cdn.poehali.dev/templates/creative-portfolio-ru/gallery-2.jpg',
-  'https://cdn.poehali.dev/templates/creative-portfolio-ru/gallery-1.jpg',
-  'https://cdn.poehali.dev/templates/creative-portfolio-ru/gallery-4.jpg',
-  'https://cdn.poehali.dev/templates/creative-portfolio-ru/gallery-5.jpg',
+const bgImages = [
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Yevtushenko_1961.jpg/800px-Yevtushenko_1961.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Yevgeny_Yevtushenko_1991.jpg/800px-Yevgeny_Yevtushenko_1991.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Evtushenko.jpg/800px-Evtushenko.jpg',
+  'https://upload.wikimedia.org/wikipedia/ru/thumb/2/22/Evtushenko_Evgeniy_Aleksandrovich.jpg/800px-Evtushenko_Evgeniy_Aleksandrovich.jpg',
+];
+
+const poems = [
+  { text: 'Людей неинтересных в мире нет.', poem: '«Людей неинтересных в мире нет», 1961' },
+  { text: 'Поэт в России — больше, чем поэт.', poem: '«Братская ГЭС», 1965' },
+  { text: 'Со мною вот что происходит: ко мне мой старый друг не ходит...', poem: '«Со мною вот что происходит», 1957' },
+  { text: 'Хотят ли русские войны? Спросите вы у тишины...', poem: '«Хотят ли русские войны?», 1961' },
+];
+
+const facts = [
+  { year: '1932', text: 'Родился в Зиме, Иркутская область' },
+  { year: '1952', text: 'Первый сборник стихов «Разведчики грядущего»' },
+  { year: '1961', text: 'Поэма «Бабий Яр» — голос против антисемитизма' },
+  { year: '1965', text: 'Поэма «Братская ГЭС» — вершина творчества' },
+  { year: '1991', text: 'Профессор университета в США' },
+  { year: '2017', text: 'Ушёл из жизни, оставив более 150 книг' },
 ];
 
 export default function HeroSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentBg, setCurrentBg] = useState(0);
+  const [currentQuote, setCurrentQuote] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [visibleFacts, setVisibleFacts] = useState<number[]>([]);
 
   useEffect(() => {
     setIsLoaded(true);
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
+
+    const bgInterval = setInterval(() => {
+      setCurrentBg((prev) => (prev + 1) % bgImages.length);
+    }, 5000);
+
+    const quoteInterval = setInterval(() => {
+      setCurrentQuote((prev) => (prev + 1) % poems.length);
     }, 4000);
 
-    return () => clearInterval(interval);
+    facts.forEach((_, i) => {
+      setTimeout(() => {
+        setVisibleFacts((prev) => [...prev, i]);
+      }, 1200 + i * 200);
+    });
+
+    return () => {
+      clearInterval(bgInterval);
+      clearInterval(quoteInterval);
+    };
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-white">
-      <div className="absolute inset-0">
-        {images.map((src, index) => (
-          <div
-            key={src}
-            className={cn(
-              'absolute inset-0 transition-opacity duration-1000 ease-in-out',
-              currentIndex === index ? 'opacity-100' : 'opacity-0'
-            )}
-          >
-            <img
-              src={src}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
+    <div className="bg-zinc-950 text-white font-sans">
 
-      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
-
-      <div className="relative z-10 flex h-full items-center">
-        <div className="container mx-auto px-8 md:px-16">
-          <div className="flex max-w-2xl flex-col gap-12">
-            {/* Portrait */}
+      {/* HERO */}
+      <section className="relative h-screen w-full overflow-hidden">
+        <div className="absolute inset-0">
+          {bgImages.map((src, index) => (
             <div
+              key={src}
               className={cn(
-                'transform transition-all duration-1000 ease-out',
-                isLoaded ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'
+                'absolute inset-0 transition-opacity duration-1500 ease-in-out',
+                currentBg === index ? 'opacity-100' : 'opacity-0'
               )}
             >
-              <div className="relative h-48 w-48 overflow-hidden rounded-full border-4 border-white shadow-2xl md:h-64 md:w-64">
-                <img
-                  src="https://cdn.poehali.dev/templates/creative-portfolio-ru/portrait.jpg"
-                  alt="Креативный специалист"
-                  className="h-full w-full object-cover"
-                />
-              </div>
+              <img src={src} alt="" className="h-full w-full object-cover object-top" />
             </div>
+          ))}
+        </div>
 
-            <div
-              className={cn(
-                'transform transition-all duration-1000 delay-300 ease-out',
-                isLoaded ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'
-              )}
-            >
-              <div className="space-y-4">
-                <p className="text-3xl font-light text-white md:text-4xl lg:text-5xl">
-                  Алексей Иванов
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
+
+        <div className="relative z-10 flex h-full items-center">
+          <div className="container mx-auto px-8 md:px-16">
+            <div className="max-w-2xl">
+              <div
+                className={cn(
+                  'transform transition-all duration-1000 ease-out',
+                  isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                )}
+              >
+                <p className="text-sm uppercase tracking-[0.3em] text-amber-400 mb-4 font-medium">
+                  Великий русский поэт
                 </p>
-                <p className="text-xl font-light text-white/80 md:text-2xl">
-                  Креативный директор | Дизайнер
+                <h1 className="text-6xl md:text-8xl font-thin text-white leading-none mb-2">
+                  Евгений
+                </h1>
+                <h1 className="text-6xl md:text-8xl font-bold text-white leading-none mb-8">
+                  Евтушенко
+                </h1>
+                <p className="text-lg text-white/60 font-light mb-2">
+                  1932 — 2017
                 </p>
-                <div className="flex gap-6 pt-4">
-                  <a
-                    href="https://t.me/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/70 transition-colors hover:text-white"
-                    aria-label="Telegram"
-                  >
-                    <svg
-                      className="h-7 w-7"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
+              </div>
+
+              <div
+                className={cn(
+                  'transform transition-all duration-1000 delay-500 ease-out mt-12',
+                  isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                )}
+              >
+                <div className="border-l-2 border-amber-400 pl-6">
+                  {poems.map((q, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        'transition-all duration-700 ease-in-out absolute',
+                        currentQuote === i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+                      )}
                     >
-                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="https://vk.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/70 transition-colors hover:text-white"
-                    aria-label="VKontakte"
-                  >
-                    <svg
-                      className="h-7 w-7"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.745-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.12-5.339-3.202-2.17-3.043-2.763-5.32-2.763-5.788 0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.814-.542 1.27-1.422 2.18-3.625 2.18-3.625.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="https://instagram.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/70 transition-colors hover:text-white"
-                    aria-label="Instagram"
-                  >
-                    <svg
-                      className="h-7 w-7"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.689-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                    </svg>
-                  </a>
+                      <p className="text-xl md:text-2xl text-white/90 font-light italic leading-relaxed">
+                        «{q.text}»
+                      </p>
+                      <p className="text-sm text-amber-400/70 mt-3">{q.poem}</p>
+                    </div>
+                  ))}
+                  <div className="invisible">
+                    <p className="text-xl md:text-2xl font-light italic leading-relaxed">placeholder</p>
+                    <p className="text-sm mt-3">placeholder</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="absolute bottom-8 right-8 z-20 flex gap-2">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={cn(
-              'h-1 transition-all duration-300',
-              currentIndex === index ? 'w-12 bg-white' : 'w-8 bg-white/40 hover:bg-white/60'
-            )}
-            aria-label={`Перейти к слайду ${index + 1}`}
-          />
-        ))}
-      </div>
-    </section>
+        <div className="absolute bottom-8 right-8 z-20 flex gap-2">
+          {bgImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentBg(index)}
+              className={cn(
+                'h-1 transition-all duration-300',
+                currentBg === index ? 'w-12 bg-amber-400' : 'w-8 bg-white/30 hover:bg-white/50'
+              )}
+              aria-label={`Слайд ${index + 1}`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* О ПОЭТЕ */}
+      <section className="py-24 px-8 md:px-16">
+        <div className="container mx-auto max-w-5xl">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-amber-400 text-sm uppercase tracking-widest mb-4">О поэте</p>
+              <h2 className="text-4xl md:text-5xl font-thin text-white mb-8 leading-tight">
+                Голос целого <span className="font-bold">поколения</span>
+              </h2>
+              <p className="text-white/60 leading-relaxed text-lg mb-6">
+                Евгений Александрович Евтушенко — один из крупнейших поэтов XX века, символ «оттепели» и шестидесятничества. Его стихи собирали стадионы, переводились на десятки языков мира.
+              </p>
+              <p className="text-white/60 leading-relaxed text-lg">
+                Поэт, прозаик, режиссёр, публицист — он прожил жизнь на виду у всего мира, говоря правду, когда это было опасно.
+              </p>
+            </div>
+            <div className="relative">
+              <div className="aspect-[3/4] overflow-hidden rounded-sm">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Yevtushenko_1961.jpg/800px-Yevtushenko_1961.jpg"
+                  alt="Евгений Евтушенко"
+                  className="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-700"
+                />
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-amber-400 text-black px-6 py-4">
+                <p className="text-3xl font-bold">150+</p>
+                <p className="text-sm font-medium">книг и сборников</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ХРОНОЛОГИЯ */}
+      <section className="py-24 px-8 md:px-16 bg-zinc-900">
+        <div className="container mx-auto max-w-4xl">
+          <p className="text-amber-400 text-sm uppercase tracking-widest mb-4 text-center">Жизнь и творчество</p>
+          <h2 className="text-4xl md:text-5xl font-thin text-white mb-16 text-center leading-tight">
+            Ключевые <span className="font-bold">даты</span>
+          </h2>
+          <div className="relative">
+            <div className="absolute left-20 top-0 bottom-0 w-px bg-amber-400/20" />
+            <div className="space-y-8">
+              {facts.map((fact, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    'flex gap-8 items-start transform transition-all duration-600 ease-out',
+                    visibleFacts.includes(i) ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'
+                  )}
+                >
+                  <div className="w-16 text-right flex-shrink-0">
+                    <span className="text-amber-400 font-bold text-lg">{fact.year}</span>
+                  </div>
+                  <div className="relative pl-8">
+                    <div className="absolute left-0 top-2 w-3 h-3 rounded-full bg-amber-400 -translate-x-1.5" />
+                    <p className="text-white/80 text-lg leading-relaxed">{fact.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ЗНАМЕНИТЫЕ СТИХИ */}
+      <section className="py-24 px-8 md:px-16">
+        <div className="container mx-auto max-w-5xl">
+          <p className="text-amber-400 text-sm uppercase tracking-widest mb-4 text-center">Поэзия</p>
+          <h2 className="text-4xl md:text-5xl font-thin text-white mb-16 text-center leading-tight">
+            Строки, ставшие <span className="font-bold">историей</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                title: 'Бабий Яр',
+                year: '1961',
+                lines: 'Над Бабьим Яром памятников нет. Крутой обрыв, как грубое надгробье.',
+                desc: 'Поэма против антисемитизма, потрясшая СССР и мир'
+              },
+              {
+                title: 'Хотят ли русские войны?',
+                year: '1961',
+                lines: 'Хотят ли русские войны? Спросите вы у тишины над ширью пашен и полей...',
+                desc: 'Антивоенный гимн, ставший народной песней'
+              },
+              {
+                title: 'Людей неинтересных в мире нет',
+                year: '1961',
+                lines: 'Людей неинтересных в мире нет. Их судьбы — как истории планет.',
+                desc: 'Гимн человечеству и уникальности каждой личности'
+              },
+              {
+                title: 'Братская ГЭС',
+                year: '1965',
+                lines: 'Поэт в России — больше, чем поэт. В ней суждено поэтами рождаться...',
+                desc: 'Монументальная поэма о судьбе России и поэта'
+              },
+            ].map((poem, i) => (
+              <div
+                key={i}
+                className="border border-white/10 p-8 hover:border-amber-400/40 transition-all duration-300 group"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-semibold text-white group-hover:text-amber-400 transition-colors">
+                    {poem.title}
+                  </h3>
+                  <span className="text-amber-400/60 text-sm">{poem.year}</span>
+                </div>
+                <p className="text-white/50 italic text-sm leading-relaxed mb-4">«{poem.lines}»</p>
+                <p className="text-white/40 text-sm">{poem.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ЦИТАТА-ФИНАЛ */}
+      <section className="py-32 px-8 md:px-16 bg-zinc-900 text-center">
+        <div className="container mx-auto max-w-3xl">
+          <p className="text-6xl text-amber-400/20 font-serif mb-4">"</p>
+          <blockquote className="text-2xl md:text-3xl font-light text-white/90 leading-relaxed italic mb-8">
+            Поэт в России — больше, чем поэт. В ней суждено поэтами рождаться лишь тем, в ком бродит гордый дух гражданства, кому уюта нет, покоя нет.
+          </blockquote>
+          <p className="text-amber-400 text-sm uppercase tracking-widest">Евгений Евтушенко</p>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="py-8 px-8 border-t border-white/10 text-center">
+        <p className="text-white/30 text-sm">Евгений Александрович Евтушенко · 1932–2017</p>
+      </footer>
+    </div>
   );
 }
